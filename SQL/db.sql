@@ -206,7 +206,7 @@ ALTER SEQUENCE public.caracterizacion_id_caracterizacion_seq OWNED BY public.car
 CREATE TABLE public.certificacion_profesional (
     id_certificacion integer NOT NULL,
     id_profesional integer NOT NULL,
-    archivo bytea,
+    archivo character varying(255),
     nombre_archivo character varying(255)
 );
 

@@ -1,5 +1,5 @@
 const professionalModel = require('../models/professionalModel')
-const { getUploadedFileInfo, deleteCertificationFile } = require('../middlewares/upload.middleware')
+const { deleteCertificationFile } = require('../middlewares/upload.middleware')
 
 //Obtener todos los profesionales
 const getAll = async(req,res)=>{
@@ -86,8 +86,7 @@ const createDataByProfessionalActive = async(req,res)=>{
 const createCertificationProfessional = async(req,res)=>{
     try {
         const id_usuario = req.user.id_usuario
-        
-        // Obtener el profesional por su ID de usuario
+
         const professional = await professionalModel.getByUserId(id_usuario)
         if (!professional) {
             return res.status(404).json({
@@ -95,21 +94,18 @@ const createCertificationProfessional = async(req,res)=>{
                 mensaje: 'Profesional no encontrado'
             })
         }
-        
-        // Obtener información del archivo subido
-        const fileInfo = getUploadedFileInfo(req)
-        if (!fileInfo) {
+
+        if (!req.file) {
             return res.status(400).json({
                 status: 'Error',
                 mensaje: 'No se ha subido ningún archivo'
             })
         }
-        
-        // Crear la certificación en la base de datos
+
         const certification = await professionalModel.createCertificationProfessional(
             professional.id_profesional,
-            fileInfo.filename, // El nombre del archivo en el servidor
-            fileInfo.originalName // El nombre original del archivo
+            req.file.filename, 
+            req.file.originalname
         )
         
         return res.status(201).json({
@@ -124,12 +120,12 @@ const createCertificationProfessional = async(req,res)=>{
         })
         
     } catch (error) {
-        // Si hay error, eliminar el archivo que se subió
         if (req.file) {
             try {
                 await deleteCertificationFile(req.file.filename)
+                console.log('Archivo eliminado después del error:', req.file.filename)
             } catch (deleteError) {
-                console.error('Error al eliminar archivo después del fallo:', deleteError)
+                console.error('Error al eliminar archivo después del fallo:', deleteError.message)
             }
         }
         
@@ -146,8 +142,7 @@ const deleteCertificationProfessional = async(req, res) => {
     try {
         const id_certificacion = req.params.id
         const id_usuario = req.user.id_usuario
-        
-        // Obtener el profesional
+
         const professional = await professionalModel.getByUserId(id_usuario)
         if (!professional) {
             return res.status(404).json({
@@ -155,8 +150,7 @@ const deleteCertificationProfessional = async(req, res) => {
                 mensaje: 'Profesional no encontrado'
             })
         }
-        
-        // Obtener información de la certificación antes de eliminarla
+
         const certificationToDelete = await professionalModel.getCertificateById(id_certificacion)
         
         if (!certificationToDelete) {
@@ -165,8 +159,7 @@ const deleteCertificationProfessional = async(req, res) => {
                 mensaje: 'Certificación no encontrada'
             })
         }
-        
-        // Verificar que la certificación pertenezca al profesional autenticado
+
         if (certificationToDelete.id_profesional !== professional.id_profesional) {
             return res.status(403).json({
                 status: 'Error',
@@ -174,20 +167,41 @@ const deleteCertificationProfessional = async(req, res) => {
             })
         }
         
-        // Eliminar de la base de datos
-        const deletedCertification = await professionalModel.deleteCertificate(id_certificacion)
-        
-        // Eliminar el archivo del sistema
+        console.log('Eliminando certificación:', {
+            id_certificacion,
+            archivo: certificationToDelete.archivo,
+            nombre_archivo: certificationToDelete.nombre_archivo
+        })
+
+        let fileDeleted = false
         if (certificationToDelete.archivo) {
             try {
                 await deleteCertificationFile(certificationToDelete.archivo)
+                fileDeleted = true
+                console.log('Archivo eliminado exitosamente:', certificationToDelete.archivo)
             } catch (fileError) {
-                console.warn('Advertencia: No se pudo eliminar el archivo físico:', fileError.message)
+                console.error('Error al eliminar el archivo físico:', fileError.message)
             }
+        } else {
+            console.warn('No se encontró nombre de archivo para eliminar')
+        }
+        
+        const deletedCertification = await professionalModel.deleteCertificate(id_certificacion)
+        
+        if (!deletedCertification) {
+            return res.status(500).json({
+                status: 'Error',
+                mensaje: 'No se pudo eliminar la certificación de la base de datos'
+            })
         }
         
         return res.status(200).json({
             status: 'Success',
+            certificacion_eliminada: {
+                id_certificacion: deletedCertification.id_certificacion,
+                archivo_eliminado: fileDeleted,
+                archivo: deletedCertification.archivo
+            },
             mensaje: 'Certificación eliminada exitosamente'
         })
         
@@ -201,10 +215,12 @@ const deleteCertificationProfessional = async(req, res) => {
 }
 
 
+
 module.exports = {
     getAll,
     getByUserId,
     createDataByProfessionalActive,
     createCertificationProfessional,
     deleteCertificationProfessional,
+
 }

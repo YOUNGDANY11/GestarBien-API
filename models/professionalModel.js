@@ -56,8 +56,12 @@ const createDataProfessional = async(id_usuario,institucion,enfoque) =>{
 }
 
 //Crear certificacion profesional
-const createCertificationProfessional = async(id_profesional,archivo,nombre_archivo) =>{
-    const result = await pool.query('INSERT INTO certificacion_profesional (id_profesional,archivo,nombre_archivo) VALUES ($1,$2,$3) RETURNING *',[id_profesional,archivo,nombre_archivo])
+const createCertificationProfessional = async(id_profesional, filename, originalName) => {
+    // Guardamos el nombre del archivo del servidor en 'archivo' y el nombre original en 'nombre_archivo'
+    const result = await pool.query(
+        'INSERT INTO certificacion_profesional (id_profesional, archivo, nombre_archivo) VALUES ($1, $2, $3) RETURNING *',
+        [id_profesional, filename, originalName]
+    )
     return result.rows[0]
 }
 

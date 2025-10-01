@@ -152,7 +152,7 @@ const getByActiveUser = async(req,res)=>{
 //Crear usuario
 const registerUser = async(req,res)=>{
     try{
-        const {id_rol, correo, contrasena, nombre, fecha_nacimiento, celular, cedula} = req.body
+        const {correo, contrasena, nombre, fecha_nacimiento, celular, cedula} = req.body
         if(!correo || !contrasena || !nombre || !fecha_nacimiento || !celular || !cedula){
             return res.status(400).json({
                 status:'Error',
@@ -174,7 +174,7 @@ const registerUser = async(req,res)=>{
                 mensaje:'Documendo de identidad ya registrado'
             })
         }
-
+        const id_rol = 3
         const contrasenaHash = await bcrypt.hash(contrasena,10)
         const user = await userModel.registerUser(id_rol,correo,contrasenaHash,nombre,fecha_nacimiento,celular,cedula)
         return res.status(200).json({

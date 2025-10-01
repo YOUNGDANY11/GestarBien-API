@@ -14,6 +14,11 @@ const anxietyListResponseSchema = require('./anxiety/anxietyListResponseSchema')
 const depressionSchema = require('./depression/depressionSchema')
 const depressionResponseSchema = require('./depression/depressionResponseSchema')
 const depressionListResponseSchema = require('./depression/depressionListResponseSchema')
+const professionalSchema = require('./professionals/professionalSchema')
+const professionalResponseSchema = require('./professionals/professionalResponseSchema')
+const professionalsListResponseSchema = require('./professionals/professionalsListResponseSchema')
+const certificationSchema = require('./professionals/certificationSchema')
+const certificationResponseSchema = require('./professionals/certificationResponseSchema')
 
 module.exports = {
     User: userSchema,
@@ -31,5 +36,10 @@ module.exports = {
     AnxietyListResponse: anxietyListResponseSchema,
     Depression: depressionSchema,
     DepressionResponse: depressionResponseSchema,
-    DepressionListResponse: depressionListResponseSchema
+    DepressionListResponse: depressionListResponseSchema,
+    Professional: professionalSchema,
+    ProfessionalResponse: professionalResponseSchema,
+    ProfessionalsListResponse: professionalsListResponseSchema,
+    Certification: certificationSchema,
+    CertificationResponse: certificationResponseSchema
 }

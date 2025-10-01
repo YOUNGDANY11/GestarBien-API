@@ -6,14 +6,12 @@ const fs = require('fs')
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         const uploadPath = path.join(__dirname, '../uploads/certifications')
-        // Crear directorio si no existe
         if (!fs.existsSync(uploadPath)) {
             fs.mkdirSync(uploadPath, { recursive: true })
         }
         cb(null, uploadPath)
     },
     filename: function (req, file, cb) {
-        // Generar nombre único para el archivo
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
         const extension = path.extname(file.originalname)
         const filename = 'cert-' + uniqueSuffix + extension
@@ -47,12 +45,12 @@ const uploadCertification = multer({
     storage: storage,
     fileFilter: fileFilter,
     limits: {
-        fileSize: 10 * 1024 * 1024, 
+        fileSize: 10 * 1024 * 1024,
         files: 1 
     }
 }).single('certification') 
 
-// Middleware personalizado para manejo de errores
+// Middleware para subir certificaciones
 const uploadCertificationMiddleware = (req, res, next) => {
     uploadCertification(req, res, function (err) {
         if (err instanceof multer.MulterError) {
@@ -63,19 +61,21 @@ const uploadCertificationMiddleware = (req, res, next) => {
             }
             if (err.code === 'LIMIT_UNEXPECTED_FILE') {
                 return res.status(400).json({
-                    error: 'Campo de archivo no válido. Use "certification"'
+                    status:'Error',
+                    mensaje: 'Campo de archivo no válido. Use "certification"'
                 })
             }
             return res.status(400).json({
-                error: 'Error al subir archivo: ' + err.message
+                status:'Error',
+                mensaje: 'Error al subir archivo'
             })
         } else if (err) {
             return res.status(400).json({
-                error: err.message
+                status:'Error',
+                mensaje: err.message
             })
         }
         
-        // Verificar que se subió un archivo
         if (!req.file) {
             return res.status(400).json({
                 error: 'No se ha subido ningún archivo'
@@ -87,50 +87,29 @@ const uploadCertificationMiddleware = (req, res, next) => {
 }
 
 // Función para eliminar archivo del sistema
-const deleteCertificationFile = (filename) => {
-    return new Promise((resolve, reject) => {
-        if (!filename) {
-            return resolve()
-        }
-        
-        const filePath = path.join(__dirname, '../uploads/certifications', filename)
-        
-        // Verificar si el archivo existe
-        fs.access(filePath, fs.constants.F_OK, (err) => {
-            if (err) {
-                // El archivo no existe, no es necesario eliminarlo
-                return resolve()
-            }
-            
-            // Eliminar el archivo
-            fs.unlink(filePath, (err) => {
-                if (err) {
-                    reject(new Error('Error al eliminar el archivo: ' + err.message))
-                } else {
-                    resolve()
-                }
-            })
+const deleteCertificationFile = async (filename) => {
+    if (!filename) {
+        return res.status.json({
+            status:'Error',
+            mensaje:'No existe el archivo'
         })
-    })
-}
-
-// Función helper para obtener información del archivo subido
-const getUploadedFileInfo = (req) => {
-    if (!req.file) {
-        return null
     }
     
-    return {
-        filename: req.file.filename,
-        originalName: req.file.originalname,
-        mimetype: req.file.mimetype,
-        size: req.file.size,
-        path: req.file.path
+    const filePath = path.join(__dirname, '../uploads/certifications', filename)
+    console.log('🔍 Intentando eliminar archivo:', filePath)
+    
+    try {
+        await fs.promises.access(filePath, fs.constants.F_OK)
+        await fs.promises.unlink(filePath)
+    } catch (error) {
+        return res.status(400).json({
+            status:'Error',
+            mensaje:'No se pudo eliminar el archivo'
+        })
     }
 }
 
 module.exports = {
     uploadCertificationMiddleware,
-    deleteCertificationFile,
-    getUploadedFileInfo
+    deleteCertificationFile
 }
