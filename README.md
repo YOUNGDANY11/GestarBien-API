@@ -253,9 +253,3 @@ Desde [package.json](https://github.com/YOUNGDANY11/GestarBien-API/blob/main/pac
 - [nodemon](https://www.npmjs.com/package/nodemon) (dev)
 
 ---
-
-## Licencia
-
-Este proyecto se distribuye bajo la licencia ISC (ver `package.json`).
-
----
