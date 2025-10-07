@@ -24,6 +24,7 @@ const getAll = async(req,res)=>{
     }
 }
 
+//Obtener por ID
 const getById = async(req,res)=>{
     try{
         const id_depresion = req.params.id
@@ -76,12 +77,33 @@ const getByNameUser = async(req,res)=>{
 const createDepression = async(req,res)=>{
     try{
         const id_usuario = req.user.id_usuario
-        const {capacidad_reir_ver_lado_bueno, mirar_futuro_con_placer, culparse_sin_necesidad, ansiedad_preocupacion_sin_motivo, miedo_panico_sin_motivo, sensacion_opresion_agobio, infelicidad_dificultad_dormir, tristeza_desgracia, infelicidad_llanto, pensamientos_autolesion } = req.body
-        if(!capacidad_reir_ver_lado_bueno || !mirar_futuro_con_placer || !culparse_sin_necesidad || !ansiedad_preocupacion_sin_motivo || !miedo_panico_sin_motivo || !sensacion_opresion_agobio || !infelicidad_dificultad_dormir || !tristeza_desgracia || !infelicidad_llanto || !pensamientos_autolesion){
-            return res.status(400).json({
-                status:'Error',
-                mensaje:'Es requerida toda la informacion'
-            })
+        const {
+            capacidad_reir_ver_lado_bueno, 
+            mirar_futuro_con_placer, 
+            culparse_sin_necesidad, 
+            ansiedad_preocupacion_sin_motivo, 
+            miedo_panico_sin_motivo, 
+            sensacion_opresion_agobio, 
+            infelicidad_dificultad_dormir, 
+            tristeza_desgracia, 
+            infelicidad_llanto, 
+            pensamientos_autolesion 
+        } = req.body
+
+        const requiredFields = [
+            'capacidad_reir_ver_lado_bueno', 'mirar_futuro_con_placer', 'culparse_sin_necesidad', 
+            'ansiedad_preocupacion_sin_motivo', 'miedo_panico_sin_motivo', 'sensacion_opresion_agobio', 
+            'infelicidad_dificultad_dormir', 'tristeza_desgracia', 'infelicidad_llanto', 'pensamientos_autolesion'
+        ]
+
+        for (let field of requiredFields) {
+            const value = req.body[field]
+            if (value === undefined || value === null || ![1, 2, 3, 4].includes(value)) {
+                return res.status(400).json({
+                    status: 'Error',
+                    mensaje: `El campo ${field} es requerido y debe ser 1, 2, 3 o 4`
+                })
+            }
         }
 
         const existsDepression = await depressionModel.getByUserId(id_usuario)
@@ -92,16 +114,30 @@ const createDepression = async(req,res)=>{
             })
         }
 
-        const depression = await depressionModel.createDepression(id_usuario,capacidad_reir_ver_lado_bueno, mirar_futuro_con_placer, culparse_sin_necesidad, ansiedad_preocupacion_sin_motivo, miedo_panico_sin_motivo, sensacion_opresion_agobio, infelicidad_dificultad_dormir, tristeza_desgracia, infelicidad_llanto, pensamientos_autolesion)
+        const depression = await depressionModel.createDepression(
+            id_usuario,
+            capacidad_reir_ver_lado_bueno, 
+            mirar_futuro_con_placer, 
+            culparse_sin_necesidad, 
+            ansiedad_preocupacion_sin_motivo, 
+            miedo_panico_sin_motivo, 
+            sensacion_opresion_agobio, 
+            infelicidad_dificultad_dormir, 
+            tristeza_desgracia, 
+            infelicidad_llanto, 
+            pensamientos_autolesion
+        )
+        
         return res.status(200).json({
             status:'Success',
             registro_depresion:depression,
-            mensaje:'Registro exitoso'
+            mensaje:'Registro de depresión creado exitosamente'
         })
     }catch(error){
+        console.error('Error en createDepression:', error)
         return res.status(500).json({
             status:'Error',
-            mensaje:'No se pudo crear el registro de depresion'
+            mensaje:'No se pudo crear el registro de depresión'
         })
     }
 }

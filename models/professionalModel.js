@@ -11,6 +11,7 @@ const getAll = async () => {
             u.cedula AS usuario_cedula,
             u.fecha_nacimiento AS usuario_fecha_nacimiento,
             cp.id_certificacion,
+            cp.archivo,
             cp.nombre_archivo
         FROM public.profesional p
         INNER JOIN public.usuario u ON p.id_usuario = u.id_usuario

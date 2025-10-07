@@ -49,6 +49,54 @@ const getByUserId = async(req,res)=>{
     }
 }
 
+//Obtener profesional activo con información completa
+const getByActiveProfessional = async(req,res)=>{
+    try{
+        const id_usuario = req.user.id_usuario
+        const professionalData = await professionalModel.getById(id_usuario)
+        if (!professionalData || professionalData.length === 0) {
+            return res.status(404).json({
+                status: 'Error',
+                mensaje: 'Profesional no encontrado'
+            })
+        }
+
+        const professional = professionalData[0]
+        const certificaciones = professionalData
+            .filter(row => row.id_certificacion) 
+            .map(row => ({
+                id_certificacion: row.id_certificacion,
+                archivo: row.archivo,
+                nombre_archivo: row.nombre_archivo
+            }))
+
+        const response = {
+            id_usuario: professional.id_usuario,
+            usuario_nombre: professional.usuario_nombre,
+            usuario_correo: professional.usuario_correo,
+            usuario_celular: professional.usuario_celular,
+            usuario_cedula: professional.usuario_cedula,
+            usuario_fecha_nacimiento: professional.usuario_fecha_nacimiento,
+            id_profesional: professional.id_profesional,
+            institucion: professional.institucion,
+            enfoque: professional.enfoque,
+            certificaciones: certificaciones
+        }
+
+        return res.status(200).json({
+            status: 'Success',
+            profesional: response,
+            mensaje: 'Consulta exitosa'
+        })
+    }catch(error){
+        console.log(error)
+        return res.status(500).json({
+            status:'Error',
+            mensaje:'No se pudo obtener al profesional'
+        })
+    }
+}
+
 //Crear informacion sobre el profesiona
 const createDataByProfessionalActive = async(req,res)=>{
     try{
@@ -219,6 +267,7 @@ const deleteCertificationProfessional = async(req, res) => {
 module.exports = {
     getAll,
     getByUserId,
+    getByActiveProfessional,
     createDataByProfessionalActive,
     createCertificationProfessional,
     deleteCertificationProfessional,

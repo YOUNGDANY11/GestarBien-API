@@ -100,6 +100,9 @@ router.get('/',auth,rolMiddleware.requireAdmin,professionalController.getAll)
  */
 router.get('/id/:id',auth,rolMiddleware.requireAdmin,professionalController.getByUserId)
 
+
+router.get('/active',auth,rolMiddleware.requireProfessional,professionalController.getByActiveProfessional)
+
 /**
  * @swagger
  * /api/professionals/active:
@@ -160,6 +163,49 @@ router.get('/id/:id',auth,rolMiddleware.requireAdmin,professionalController.getB
  *               $ref: '#/components/schemas/Error'
  */
 router.post('/active',auth,rolMiddleware.requireProfessional,professionalController.createDataByProfessionalActive)
+
+/**
+ * @swagger
+ * /api/professionals/active:
+ *   get:
+ *     summary: Obtener datos del profesional activo (Solo Profesionales)
+ *     description: Endpoint para que el profesional autenticado pueda obtener sus propios datos profesionales registrados
+ *     tags: [7. Profesionales - Autenticado]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Datos del profesional obtenidos exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ProfessionalResponse'
+ *       404:
+ *         description: El profesional no ha registrado sus datos aún
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Token no válido o no proporcionado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: No tienes permisos de profesional
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+router.get('/active',auth,rolMiddleware.requireProfessional,professionalController.getByActiveProfessional)
 
 /**
  * @swagger
