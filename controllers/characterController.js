@@ -74,6 +74,29 @@ const getByNameUser = async(req,res)=>{
     }
 }
 
+const getByIdUserActive = async(req,res)=>{
+    try{
+        const {id_usuario} = req.user
+        const character = await characterModel.getByUserId(id_usuario)
+        if(!character){
+            return res.status(404).json({
+                status:'Error',
+                mensaje:'No existe esta caracterizacion'
+            })
+        }
+        return res.status(200).json({
+            status:'Success',
+            caracterizacion:character,
+            mensaje:'Consulta exitosa'
+        })
+    }catch(error){
+        return res.status(500).json({
+            status:'Error',
+            mensaje:'No se pudo obtener la caracterizacion'
+        })
+    }
+}
+
 //Crear caracterizacion
 const createCharacter = async(req,res)=>{
     try{
@@ -135,6 +158,7 @@ module.exports = {
     getAll,
     getById,
     getByNameUser,
+    getByIdUserActive,
     createCharacter,
     deleteCharacter
 }

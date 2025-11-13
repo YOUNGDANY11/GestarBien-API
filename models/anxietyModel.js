@@ -60,6 +60,12 @@ const getByUserId = async(id_usuario) => {
     return result.rows[0]
 }
 
+//Obtener por ID de usuario activo
+const getByUserIdActive = async(id_usuario) => {
+    const result = await pool.query('SELECT * FROM ansiedad WHERE id_usuario = $1', [id_usuario])
+    return result.rows[0]
+}
+
 //Crear registro de ansiedad
 const createAnxiety = async (id_usuario, preocupacion_bienestar_propio, miedo_dano_futuro, temor_malo_suceda, preocupacion_muchas_cosas, preocupacion_futuro, sentirse_desbordado, miedo_mente_bloquee, agobios_estres_incomodidad, preocupacion_empleo, dificultad_dormir, hacer_cosas_cierto_orden, busqueda_perfeccion, necesidad_control, dificultad_dejar_revisar, nerviosismo_sobresalto, preocupacion_pensamientos_repetitivos, estar_guardia_atenta, molestia_recuerdos_suenos, preocupacion_verguenza, miedo_juicio_negativo, incomodidad_multitudes, evitar_actividades_sociales, evitar_cosas_preocupan, desapego_irrealidad, perdida_tiempo_memoria, dificultad_adaptar_cambios, ansiedad_dificulta_actividades, pensamientos_acelerados, miedo_perder_control, sentimiento_panico, agitacion) => {
     const result = await pool.query(`
@@ -117,6 +123,7 @@ module.exports = {
     getById,
     getByNameUser,
     getByUserId,
+    getByUserIdActive,
     createAnxiety,
     deleteAnxiety
 }

@@ -73,6 +73,31 @@ const getByNameUser = async(req,res)=>{
     }
 }
 
+const getByUserIdActive = async(req,res)=>{
+    try{
+        const {id_usuario} = req.user
+        const depression = await depressionModel.getByUserId(id_usuario)
+        if(!depression){
+            return res.status(404).json({
+                status:'Error',
+                mensaje:'No existe este registro de depresion'
+            })
+        }
+        return res.status(200).json({
+            status:'Success',
+            registro_depresion:depression,
+            mensaje:'Consulta exitosa'
+        })
+    }catch(error){
+        console.log(error)
+        return res.status(500).json({
+            status:'Error',
+            mensaje:'No se pudo obtener el registro'
+        })
+    }
+}
+
+
 //crear registro de depresion
 const createDepression = async(req,res)=>{
     try{
@@ -171,6 +196,7 @@ module.exports = {
     getAll,
     getById,
     getByNameUser,
+    getByUserIdActive,
     createDepression,
     deleteDepression
 }

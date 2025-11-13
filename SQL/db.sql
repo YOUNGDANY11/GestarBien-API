@@ -615,6 +615,14 @@ ALTER TABLE ONLY public.profesional
 ALTER TABLE ONLY public.usuario
     ADD CONSTRAINT usuario_id_rol_fkey FOREIGN KEY (id_rol) REFERENCES public.rol(id_rol);
 
+-- Insert default roles
+INSERT INTO public.rol (id_rol, nombre) VALUES (1, 'Admin');
+INSERT INTO public.rol (id_rol, nombre) VALUES (2, 'Profesional');
+INSERT INTO public.rol (id_rol, nombre) VALUES (3, 'Paciente');
+
+-- Ensure sequence is set to next value after inserted rows
+SELECT pg_catalog.setval('public.rol_id_rol_seq', 3, true);
+
 
 -- Completed on 2025-09-18 15:30:09
 

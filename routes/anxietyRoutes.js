@@ -685,6 +685,93 @@ router.get('/id/:id',auth,rolMiddleware.requireAdminOrProfessional,anxietyContro
  */
 router.get('/name/:name',auth,rolMiddleware.requireAdminOrProfessional,anxietyController.getByNameUser)
 
+
+
+/**
+ * @swagger
+ * /api/anxiety/active:
+ *   get:
+ *     summary: Obtener el registro de ansiedad activo del usuario autenticado
+ *     description: Obtiene el registro de ansiedad activo asociado al usuario autenticado. Solo accesible por el propio usuario.
+ *     tags: [5. Ansiedad - Usuario]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Registro de ansiedad activo obtenido exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AnxietyDetailResponse'
+ *             example:
+ *               status: "Success"
+ *               registro_ansiedad:
+ *                 id_ansiedad: 1
+ *                 id_usuario: 5
+ *                 preocupacion_bienestar_propio: 1
+ *                 miedo_dano_futuro: 0
+ *                 temor_malo_suceda: 1
+ *                 preocupacion_muchas_cosas: 1
+ *                 preocupacion_futuro: 1
+ *                 sentirse_desbordado: 0
+ *                 miedo_mente_bloquee: 1
+ *                 agobios_estres_incomodidad: 1
+ *                 preocupacion_empleo: 0
+ *                 dificultad_dormir: 1
+ *                 hacer_cosas_cierto_orden: 0
+ *                 busqueda_perfeccion: 1
+ *                 necesidad_control: 1
+ *                 dificultad_dejar_revisar: 0
+ *                 nerviosismo_sobresalto: 1
+ *                 preocupacion_pensamientos_repetitivos: 1
+ *                 estar_guardia_atenta: 1
+ *                 molestia_recuerdos_suenos: 0
+ *                 preocupacion_verguenza: 1
+ *                 miedo_juicio_negativo: 1
+ *                 incomodidad_multitudes: 0
+ *                 evitar_actividades_sociales: 1
+ *                 evitar_cosas_preocupan: 1
+ *                 desapego_irrealidad: 0
+ *                 perdida_tiempo_memoria: 0
+ *                 dificultad_adaptar_cambios: 1
+ *                 ansiedad_dificulta_actividades: 1
+ *                 pensamientos_acelerados: 1
+ *                 miedo_perder_control: 1
+ *                 sentimiento_panico: 0
+ *                 agitacion: 1
+ *               mensaje: "Consulta exitosa"
+ *       401:
+ *         description: Token de autenticación inválido o faltante
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               status: "Error"
+ *               mensaje: "Token no válido"
+ *       404:
+ *         description: No se encontró registro de ansiedad activo para el usuario
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               status: "Error"
+ *               mensaje: "No existe registro de ansiedad activo para este usuario"
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               status: "Error"
+ *               mensaje: "No se pudo obtener el registro de ansiedad activo"
+ */
+router.get('/active', auth, anxietyController.getByUserIdActive)
+
+
+
 /**
  * @swagger
  * /api/anxiety:

@@ -414,6 +414,68 @@ router.get('/id/:id',auth,rolMiddleware.requireAdminOrProfessional,depressionCon
  */
 router.get('/name/:name',auth,rolMiddleware.requireAdminOrProfessional,depressionController.getByNameUser)
 
+
+/**
+ * @swagger
+ * /api/depression/active:
+ *   get:
+ *     summary: Obtener el registro de depresión activo del usuario autenticado
+ *     description: Obtiene el registro de depresión activo asociado al usuario autenticado. Solo accesible por el propio usuario.
+ *     tags: [6. Depresión - Usuario]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Registro de depresión activo obtenido exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/DepressionDetailResponse'
+ *             example:
+ *               status: "Success"
+ *               registro_depresion:
+ *                 id_depresion: 1
+ *                 id_usuario: 5
+ *                 capacidad_reir_ver_lado_bueno: 1
+ *                 mirar_futuro_con_placer: 0
+ *                 culparse_sin_necesidad: 1
+ *                 ansiedad_preocupacion_sin_motivo: 1
+ *                 miedo_panico_sin_motivo: 0
+ *                 sensacion_opresion_agobio: 1
+ *                 infelicidad_dificultad_dormir: 1
+ *                 tristeza_desgracia: 1
+ *                 infelicidad_llanto: 0
+ *                 pensamientos_autolesion: 0
+ *               mensaje: "Consulta exitosa"
+ *       401:
+ *         description: Token de autenticación inválido o faltante
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               status: "Error"
+ *               mensaje: "Token no válido"
+ *       404:
+ *         description: No se encontró registro de depresión activo para el usuario
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               status: "Error"
+ *               mensaje: "No existe registro de depresión activo para este usuario"
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               status: "Error"
+ *               mensaje: "No se pudo obtener el registro de depresión activo"
+ */
+router.get('/active',auth,depressionController.getByUserIdActive)
 /**
  * @swagger
  * /api/depression:

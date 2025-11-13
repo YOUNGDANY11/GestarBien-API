@@ -212,6 +212,63 @@ router.get('/id/:id',auth,rolMiddleware.requireAdminOrProfessional,characterCont
  */
 router.get('/name/:name',auth,rolMiddleware.requireAdminOrProfessional,characterController.getByNameUser)
 
+
+
+/**
+ * @swagger
+ * /api/characters/active:
+ *   get:
+ *     summary: Obtener la caracterización activa del usuario autenticado
+ *     description: Obtiene la caracterización activa asociada al usuario autenticado. Solo accesible por el propio usuario.
+ *     tags: [4. Caracterizaciones - Usuario]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Caracterización activa obtenida exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: "Success"
+ *                 caracterizacion:
+ *                   $ref: '#/components/schemas/CharacterResponse'
+ *                 mensaje:
+ *                   type: string
+ *                   example: "Consulta exitosa"
+ *       401:
+ *         description: Token no válido o usuario no autenticado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               status: "Error"
+ *               mensaje: "Token no válido"
+ *       404:
+ *         description: No se encontró caracterización activa para el usuario
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               status: "Error"
+ *               mensaje: "No existe caracterización activa para este usuario"
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               status: "Error"
+ *               mensaje: "No se pudo obtener la caracterización activa"
+ */
+router.get('/active',auth,characterController.getByIdUserActive)
+
 /**
  * @swagger
  * /api/characters:

@@ -74,6 +74,30 @@ const getByNameUser = async(req,res)=>{
     }
 }
 
+//Obtener por ID de usuario activo
+
+const getByUserIdActive = async(req,res)=>{
+    try{
+        const {id_usuario} = req.user
+        const anxiety = await anxietyModel.getByUserIdActive(id_usuario)
+        if(!anxiety){
+            return res.status(404).json({
+                status:'Error',
+                mensaje:'No existe este registro de ansiedad'
+            })
+        }
+        return res.status(200).json({
+            status:'Success',
+            registro_ansiedad: anxiety,
+            mensaje:'Consulta exitosa'
+        }) 
+    }catch(error){
+        return res.status(500).json({
+            status:'Error',
+            mensaje:'No se pudo obtener este registro de ansiedad'
+        })
+    }
+}
 //Crear registro de ansiedad
 const createAnxiety = async(req,res)=>{
     try{
@@ -219,6 +243,7 @@ module.exports = {
     getAll,
     getById,
     getByNameUser,
+    getByUserIdActive,
     createAnxiety,
     deleteAnxiety
 }
