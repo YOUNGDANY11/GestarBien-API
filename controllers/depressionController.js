@@ -123,10 +123,10 @@ const createDepression = async(req,res)=>{
 
         for (let field of requiredFields) {
             const value = req.body[field]
-            if (value === undefined || value === null || ![1, 2, 3, 4].includes(value)) {
+            if (value === undefined || value === null || ![0, 1, 2, 3].includes(value)) {
                 return res.status(400).json({
                     status: 'Error',
-                    mensaje: `El campo ${field} es requerido y debe ser 1, 2, 3 o 4`
+                    mensaje: `El campo ${field} es requerido y debe ser 0, 1, 2 o 3`
                 })
             }
         }

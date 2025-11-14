@@ -152,10 +152,10 @@ const createAnxiety = async(req,res)=>{
 
         for (let field of requiredFields) {
             const value = req.body[field]
-            if (value === undefined || value === null || ![1, 2, 3, 4].includes(value)) {
+            if (value === undefined || value === null || ![0, 1, 2, 3].includes(value)) {
                 return res.status(400).json({
                     status: 'Error',
-                    mensaje: `El campo ${field} es requerido y debe ser 1 (Nunca), 2 (Algunas veces), 3 (Con frecuencia) o 4 (Casi siempre)`
+                    mensaje: `El campo ${field} es requerido y debe ser 0 (Nunca), 1 (Algunas veces), 2 (Con frecuencia) o 3 (Casi siempre)`
                 })
             }
         }
